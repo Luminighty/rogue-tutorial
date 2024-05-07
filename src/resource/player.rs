@@ -1,4 +1,5 @@
 use rltk::Point;
+use specs::Entity;
 
 pub struct PlayerData {
 	pub position: Point
@@ -9,3 +10,6 @@ impl PlayerData {
 		Self { position: Point::new(x, y) }
 	}
 }
+
+
+pub struct PlayerEntity(pub Entity);

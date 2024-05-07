@@ -1,16 +1,32 @@
 use specs::prelude::*;
 use crate::state::State;
 
+
 mod visibility;
 mod monster;
+mod map_indexing;
+mod melee_combat;
+mod item_pickup;
+mod inventory_system;
+pub mod damage;
 pub mod player;
 
-pub fn run_systems(state: &mut State) {
-	let mut visibility = visibility::VisibilitySystem {};
-	visibility.run_now(&state.ecs);
+macro_rules! run_now {
+	($system: expr, $ecs: expr) => {
+		let mut sys = $system;
+		sys.run_now($ecs);
+	};
+}
 
-	let mut mob = monster::MonsterAI {};
-	mob.run_now(&state.ecs);
+pub fn run_systems(state: &mut State) {
+	run_now!(visibility::VisibilitySystem {}, &state.ecs);
+	run_now!(monster::MonsterAI {}, &state.ecs);
+	run_now!(map_indexing::MapIndexingSystem {}, &state.ecs);
+	run_now!(melee_combat::MeleeCombatSystem {}, &state.ecs);
+	run_now!(damage::DamageSystem {}, &state.ecs);
+	run_now!(item_pickup::ItemCollectionSystem {}, &state.ecs);
+	run_now!(inventory_system::PotionUseSystem {}, &state.ecs);
+	run_now!(inventory_system::ItemDropSystem {}, &state.ecs);
 
 	state.ecs.maintain();
 }

@@ -1,13 +1,17 @@
 use specs_derive::Component;
 use specs::prelude::*;
 
+mod item;
 mod common;
 mod enemy;
 mod player;
+mod combat;
 
+pub use item::*;
 pub use common::*;
 pub use enemy::*;
 pub use player::*;
+pub use combat::*;
 
 #[derive(Component, Default)]
 pub struct Viewshed {
@@ -29,4 +33,15 @@ pub fn register_components(ecs: &mut World) {
 	ecs.register::<Player>();
 	ecs.register::<Viewshed>();
 	ecs.register::<Monster>();
+	ecs.register::<Name>();
+	ecs.register::<BlocksTile>();
+	ecs.register::<CombatStats>();
+	ecs.register::<WantsToMelee>();
+	ecs.register::<SufferDamage>();
+	ecs.register::<Item>();
+	ecs.register::<Potion>();
+	ecs.register::<InBackpack>();
+	ecs.register::<WantsToPickupItem>();
+	ecs.register::<WantsToDrinkPotion>();
+	ecs.register::<WantsToDropItem>();
 }

@@ -1,4 +1,4 @@
-use rltk::RGB;
+use rltk::{RandomNumberGenerator, RGB};
 use specs::{Builder, World, WorldExt};
 
 use crate::component::*;
@@ -6,21 +6,42 @@ use crate::component::*;
 pub fn create_monster(
 	world: &mut World, 
 	x: i32, y: i32,
-	rng: &mut rltk::RandomNumberGenerator
 ) {
-	let glyph = match rng.roll_dice(1, 2) {
-		1 => rltk::to_cp437('g'),
-		_ => rltk::to_cp437('o'),
-	};
+	let roll = { world.write_resource::<RandomNumberGenerator>().roll_dice(1, 2) };
+	match roll {
+		1 => orc(world, x, y),
+		_ => goblin(world, x, y),
+	}
+}
 
-	world.create_entity()
+pub fn goblin(ecs: &mut World, x: i32, y: i32) {
+	monster(ecs, x, y, 
+		rltk::to_cp437('g'),
+		"Goblin"
+	);
+}
+
+pub fn orc(ecs: &mut World, x: i32, y: i32) {
+	monster(ecs, x, y, 
+		rltk::to_cp437('o'), 
+		"Orc"
+	);
+}
+
+
+fn monster<S: ToString>(ecs: &mut World, x: i32, y: i32, glyph: rltk::FontCharType, name: S) {
+	ecs.create_entity()
 		.with(Position::new(x, y))
 		.with(Renderable {
 			glyph,
 			fg: RGB::named(rltk::RED),
 			bg: RGB::named(rltk::BLACK),
+			render_order: 1
 		})
 		.with(Viewshed::new(8))
 		.with(Monster::new())
-		.build();
+		.with(Name::new(name.to_string()))
+		.with(BlocksTile {})
+		.with(CombatStats::new(16, 1, 4))
+		.build();	
 }

@@ -1,7 +1,7 @@
 use rltk::{field_of_view, Point};
 use specs::*;
 use crate::component::*;
-use crate::resource::map::{xy_idx, Map};
+use crate::resource::map::Map;
 
 pub struct VisibilitySystem {}
 
@@ -35,7 +35,7 @@ impl<'a> System<'a> for VisibilitySystem {
 					*t = false;
 				}
 				for tile in viewshed.visible_tiles.iter() {
-					let idx = xy_idx(tile.x, tile.y);
+					let idx = map.xy_idx(tile.x, tile.y);
 					map.revealed_tiles[idx] = true;
 					map.visible_tiles[idx] = true;
 				}
