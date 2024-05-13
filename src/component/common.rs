@@ -1,9 +1,13 @@
 use rltk::RGB;
-use specs_derive::Component;
-use specs::prelude::*;
+use serde::{Deserialize, Serialize};
+use specs_derive::{Component, ConvertSaveload};
+use specs::{prelude::*, saveload::Marker};
+use specs::saveload::ConvertSaveload;
+use specs::error::NoError;
 
+use crate::resource::map::Map;
 
-#[derive(Component, Clone, Copy)]
+#[derive(Component, Clone, ConvertSaveload)]
 pub struct Position {
 	pub x: i32,
 	pub y: i32,
@@ -16,7 +20,7 @@ impl Position {
 }
 
 
-#[derive(Component)]
+#[derive(Component, Clone, ConvertSaveload)]
 pub struct Renderable {
 	pub glyph: rltk::FontCharType,
 	pub fg: RGB,
@@ -30,7 +34,7 @@ impl Renderable {
 	}
 }
 
-#[derive(Component)]
+#[derive(Component, Clone, ConvertSaveload)]
 pub struct Name {
 	pub name: String
 }
@@ -51,11 +55,11 @@ impl Name {
 	}
 }
 
-#[derive(Component)]
+#[derive(Component, Clone, Serialize, Deserialize)]
 #[storage(NullStorage)]
 pub struct BlocksTile {}
 
-#[derive(Component)]
+#[derive(Component, Clone, ConvertSaveload)]
 pub struct CombatStats {
 	pub max_hp: i32,
 	pub hp: i32,
@@ -70,4 +74,13 @@ impl CombatStats {
 			defense, power
 		}
 	}
+}
+
+#[derive(Component, Clone, Serialize, Deserialize)]
+#[storage(NullStorage)]
+pub struct SerializeMe;
+
+#[derive(Component, Clone, ConvertSaveload)]
+pub struct SerializationHelper {
+	pub map: Map
 }

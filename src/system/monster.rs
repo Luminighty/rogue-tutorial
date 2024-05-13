@@ -12,10 +12,11 @@ impl<'a> System<'a> for MonsterAI {
 		ReadExpect<'a, PlayerEntity>,
 		ReadExpect<'a, RunState>,
 		Entities<'a>,
-		WriteStorage<'a, Viewshed>,
 		ReadStorage<'a, Name>,
-		WriteStorage<'a, Position>,
 		ReadStorage<'a, Monster>,
+		WriteStorage<'a, Confusion>,
+		WriteStorage<'a, Viewshed>,
+		WriteStorage<'a, Position>,
 		WriteStorage<'a, WantsToMelee>
 	);
 
@@ -26,16 +27,26 @@ impl<'a> System<'a> for MonsterAI {
 			player,
 			run_state,
 			entities,
-			mut viewshed, 
 			name,
-			mut position,
 			monster,
+			mut confusion,
+			mut viewshed, 
+			mut position,
 			mut wants_to_melee
 		) = data;
 
 		if *run_state != RunState::MonsterTurn { return; }
 
 		for (entity, viewshed, name, _monster, position) in (&entities, &mut viewshed, &name, &monster, &mut position).join() {
+			let mut can_act = true;
+			if let Some(confused) = confusion.get_mut(entity) {
+				can_act = false;
+				confused.turns -= 1;
+				if confused.turns < 1 { confusion.remove(entity); }
+			}
+
+			if !can_act { continue; }
+
 			let distance = rltk::DistanceAlg::Pythagoras.distance2d(
 				Point::new(position.x, position.y), 
 				Point::new(player_data.position.x, player_data.position.y)

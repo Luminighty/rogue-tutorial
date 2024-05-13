@@ -1,7 +1,9 @@
 use rltk::{RandomNumberGenerator, RGB};
-use specs::{Builder, World, WorldExt};
+use specs::{saveload::{MarkedBuilder, SimpleMarker}, Builder, World, WorldExt};
 
 use crate::component::*;
+
+use super::render_order;
 
 pub fn create_monster(
 	world: &mut World, 
@@ -31,12 +33,13 @@ pub fn orc(ecs: &mut World, x: i32, y: i32) {
 
 fn monster<S: ToString>(ecs: &mut World, x: i32, y: i32, glyph: rltk::FontCharType, name: S) {
 	ecs.create_entity()
+		.marked::<SimpleMarker<SerializeMe>>()
 		.with(Position::new(x, y))
 		.with(Renderable {
 			glyph,
 			fg: RGB::named(rltk::RED),
 			bg: RGB::named(rltk::BLACK),
-			render_order: 1
+			render_order: render_order::MONSTER,
 		})
 		.with(Viewshed::new(8))
 		.with(Monster::new())

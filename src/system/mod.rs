@@ -10,6 +10,7 @@ mod item_pickup;
 mod inventory_system;
 pub mod damage;
 pub mod player;
+pub mod saveload_system;
 
 macro_rules! run_now {
 	($system: expr, $ecs: expr) => {
@@ -25,7 +26,7 @@ pub fn run_systems(state: &mut State) {
 	run_now!(melee_combat::MeleeCombatSystem {}, &state.ecs);
 	run_now!(damage::DamageSystem {}, &state.ecs);
 	run_now!(item_pickup::ItemCollectionSystem {}, &state.ecs);
-	run_now!(inventory_system::PotionUseSystem {}, &state.ecs);
+	run_now!(inventory_system::ItemUseSystem {}, &state.ecs);
 	run_now!(inventory_system::ItemDropSystem {}, &state.ecs);
 
 	state.ecs.maintain();

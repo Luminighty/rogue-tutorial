@@ -21,7 +21,8 @@ impl<'a> System<'a> for DamageSystem {
 }
 
 impl DamageSystem {
-	pub fn delete_the_dead(ecs: &mut World) {
+	pub fn delete_the_dead(ecs: &mut World) -> bool {
+		let mut player_died = false;
 		let mut dead: Vec<Entity> = Vec::new();
 		{
 			let combat_stats = ecs.read_storage::<CombatStats>();
@@ -33,6 +34,7 @@ impl DamageSystem {
 				if stats.hp > 0 { continue; }
 				if let Some(_) = players.get(entity) { 
 					console::log("you are dead.");
+					player_died = true;
 					continue; 
 				}
 				if let Some(name) = names.get(entity) {
@@ -42,5 +44,6 @@ impl DamageSystem {
 			}
 		}
 		ecs.delete_entities(&dead).expect("Unable to delete.");
+		player_died
 	}
 }

@@ -1,13 +1,16 @@
-use specs_derive::Component;
+use specs_derive::{Component, ConvertSaveload};
 use specs::prelude::*;
+use serde::{Deserialize, Serialize};
+use specs::saveload::*;
+use specs::error::NoError;
 
 
-#[derive(Component, Debug, Clone)]
+#[derive(Component, Clone, ConvertSaveload)]
 pub struct WantsToMelee {
 	pub target: Entity
 }
 
-#[derive(Component)]
+#[derive(Component, Clone, ConvertSaveload)]
 pub struct SufferDamage {
 	pub amount: Vec<i32>
 }

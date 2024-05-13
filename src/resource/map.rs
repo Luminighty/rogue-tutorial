@@ -1,6 +1,7 @@
 use std::cmp::{max, min};
 
 use rltk::{Point, RandomNumberGenerator, Rltk, Tile, RGB};
+use serde::{Deserialize, Serialize};
 use specs::{Entity, World};
 
 use crate::utils::rect::Rect;
@@ -9,11 +10,12 @@ pub const WIDTH: i32 = 80;
 pub const HEIGHT: i32 = 43;
 pub const SIZE: usize = (WIDTH * HEIGHT) as usize;
 
-#[derive(PartialEq, Copy, Clone)]
+#[derive(PartialEq, Copy, Clone, Serialize, Deserialize)]
 pub enum TileType {
     Wall, Floor
 }
 
+#[derive(Default, Serialize, Deserialize, Clone)]
 pub struct Map {
 	pub tiles: Vec<TileType>,
 	pub rooms: Vec<Rect>,
@@ -22,6 +24,9 @@ pub struct Map {
 	pub revealed_tiles: Vec<bool>,
 	pub visible_tiles : Vec<bool>,
 	pub blocked : Vec<bool>,
+
+	#[serde(skip_serializing)]
+	#[serde(skip_deserializing)]
 	pub tile_content: Vec<Vec<Entity>>,
 }
 

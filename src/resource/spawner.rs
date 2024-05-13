@@ -31,21 +31,21 @@ pub fn spawn_room(ecs: &mut World, room: &Rect) {
 	for idx in items.iter() {
 		let x = *idx % width;
 		let y = *idx / width;
-		templates::item::health_potion(ecs, x as i32, y as i32);
+		templates::item::random_item(ecs, x as i32, y as i32);
 	}
 }
 
-pub fn spawn_item(ecs: &mut World, room: &Rect) {
+pub fn spawn_item(ecs: &mut World, room: &Rect, amount: i32) {
 	let width = { ecs.fetch::<Map>().width as usize };
 	let items = {
 		let mut rng = ecs.write_resource::<rltk::RandomNumberGenerator>();
-		select_points(1, &mut rng, room, width)
+		select_points(amount, &mut rng, room, width)
 	};
 
 	for idx in items.iter() {
 		let x = *idx % width;
 		let y = *idx / width;
-		templates::item::health_potion(ecs, x as i32, y as i32);
+		templates::item::random_item(ecs, x as i32, y as i32);
 	}
 }
 

@@ -1,16 +1,20 @@
-use specs_derive::Component;
+use rltk::Point;
+use specs_derive::{Component, ConvertSaveload};
 use specs::prelude::*;
+use serde::{Deserialize, Serialize};
+use specs::saveload::*;
+use specs::error::NoError;
 
-#[derive(Component, Debug)]
+#[derive(Component, Clone, Serialize, Deserialize)]
 #[storage(NullStorage)]
 pub struct Item {}
 
-#[derive(Component, Debug)]
-pub struct Potion {
+#[derive(Component, Clone, ConvertSaveload)]
+pub struct ProvidesHealing {
 	pub heal_amount: i32
 }
 
-#[derive(Component, Debug, Clone)]
+#[derive(Component, Clone, ConvertSaveload)]
 pub struct InBackpack {
 	pub owner: Entity
 }
@@ -20,7 +24,7 @@ impl InBackpack {
 	}
 }
 
-#[derive(Component, Debug, Clone)]
+#[derive(Component, Clone, ConvertSaveload)]
 pub struct WantsToPickupItem {
 	pub collected_by: Entity,
 	pub item: Entity
@@ -32,18 +36,46 @@ impl WantsToPickupItem {
 	}
 }
 
-#[derive(Component, Debug)]
-pub struct WantsToDrinkPotion {
-	pub potion: Entity
+#[derive(Component, Clone, ConvertSaveload)]
+pub struct WantsToUseItem {
+	pub item: Entity,
+	pub target: Option<rltk::Point>
 }
 
-impl WantsToDrinkPotion {
-	pub fn new(potion: Entity) -> Self {
-		Self { potion }
+impl WantsToUseItem {
+	pub fn new(item: Entity) -> Self {
+		Self { item, target: None }
+	}
+	
+	pub fn on(item: Entity, target: Option<Point>) -> Self {
+		Self { item, target }
 	}
 }
 
-#[derive(Component, Debug)]
+#[derive(Component, Clone, ConvertSaveload)]
 pub struct WantsToDropItem {
 	pub item: Entity
+}
+
+#[derive(Component, Clone, Serialize, Deserialize)]
+pub struct Consumable {}
+
+#[derive(Component, Clone, ConvertSaveload)]
+pub struct Ranged {
+	pub range: i32
+}
+
+#[derive(Component, Clone, ConvertSaveload)]
+pub struct InflictsDamage {
+	pub damage: i32,
+}
+
+#[derive(Component, Clone, ConvertSaveload)]
+pub struct AreaOfEffect {
+	pub radius: i32,
+}
+
+#[derive(Component, Clone, ConvertSaveload)]
+pub struct Confusion {
+	pub turns: i32
 }

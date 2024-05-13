@@ -1,5 +1,11 @@
-use specs_derive::Component;
+use specs_derive::{Component, ConvertSaveload};
+use specs::saveload::{SimpleMarker, SimpleMarkerAllocator};
 use specs::prelude::*;
+use rltk::RGB;
+use serde::{Deserialize, Serialize};
+use specs::saveload::Marker;
+use specs::saveload::ConvertSaveload;
+use specs::error::NoError;
 
 mod item;
 mod common;
@@ -13,7 +19,7 @@ pub use enemy::*;
 pub use player::*;
 pub use combat::*;
 
-#[derive(Component, Default)]
+#[derive(Component, Clone, ConvertSaveload)]
 pub struct Viewshed {
 	pub visible_tiles: Vec<rltk::Point>,
 	pub range: i32,
@@ -28,6 +34,9 @@ impl Viewshed {
 
 
 pub fn register_components(ecs: &mut World) {
+	ecs.register::<SimpleMarker<SerializeMe>>();
+	ecs.register::<SerializationHelper>();
+	ecs.insert(SimpleMarkerAllocator::<SerializeMe>::new());
 	ecs.register::<Position>();
 	ecs.register::<Renderable>();
 	ecs.register::<Player>();
@@ -39,9 +48,14 @@ pub fn register_components(ecs: &mut World) {
 	ecs.register::<WantsToMelee>();
 	ecs.register::<SufferDamage>();
 	ecs.register::<Item>();
-	ecs.register::<Potion>();
+	ecs.register::<ProvidesHealing>();
 	ecs.register::<InBackpack>();
 	ecs.register::<WantsToPickupItem>();
-	ecs.register::<WantsToDrinkPotion>();
+	ecs.register::<WantsToUseItem>();
 	ecs.register::<WantsToDropItem>();
+	ecs.register::<Consumable>();
+	ecs.register::<Ranged>();
+	ecs.register::<InflictsDamage>();
+	ecs.register::<AreaOfEffect>();
+	ecs.register::<Confusion>();
 }
